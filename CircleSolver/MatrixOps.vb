@@ -226,7 +226,7 @@
     End Function
 
     Public Shared Function stringSpaceoutRet(inStr As String) As String
-        For i = 1 To 16 - Len(inStr)
+        For i = 1 To 5 - Len(inStr)
             inStr = " " & inStr
         Next
 

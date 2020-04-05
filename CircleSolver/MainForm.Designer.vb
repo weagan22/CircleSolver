@@ -24,12 +24,12 @@ Partial Class MainForm
     Private Sub InitializeComponent()
         Me.SuspendLayout()
         '
-        'Form1
+        'MainForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(800, 450)
-        Me.Name = "Form1"
+        Me.ClientSize = New System.Drawing.Size(534, 359)
+        Me.Name = "MainForm"
         Me.Text = "Form1"
         Me.ResumeLayout(False)
 

@@ -72,6 +72,7 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BestFit.vb" />
     <Compile Include="MatrixOps.vb" />
     <Compile Include="MainForm.vb">
       <SubType>Form</SubType>
