@@ -1,6 +1,9 @@
 ﻿Class BestFit
+    Public fitType As String = "RMS"
     Public centerPnt As Point = New Point(0, 0)
     Public rHat As Double
+    Public minRad As Double
+    Public maxRad As Double
     Dim J As Double
     Dim dJdx As Double
     Dim dJdy As Double
@@ -8,7 +11,7 @@
 
     Sub fitCircle(points() As Point)
         Call initializeFit(points)
-        completedIterations = minimize(points, 1000, 0.1, 0.000000000001)
+        completedIterations = RMSminimize(points, 10000, 0.01, 1.0E-18)
     End Sub
 
     Function initializeFit(points() As Point) As Point
@@ -73,7 +76,7 @@
         Return rHat
     End Function
 
-    Function minimize(points() As Point, maxIter As Integer, inThresh As Double, outThresh As Double) As Integer
+    Function RMSminimize(points() As Point, maxIter As Integer, inThresh As Double, outThresh As Double) As Integer
         Call computeCost(points)
 
         If J < 0.0000000001 Or Math.Sqrt(dJdx ^ 2 + dJdy ^ 2) < 0.0000000001 Then

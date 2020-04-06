@@ -179,6 +179,65 @@
         Return returnArr
     End Function
 
+    Public Shared Function matrixSubtractSingle(matrix1() As Double, matrix2() As Double) As Double()
+        If UBound(matrix1, 1) <> UBound(matrix2, 1) Then
+            Err.Raise(1, "Matrix Add", "Check your array dimensions to make sure they are equal")
+        End If
+
+        Dim returnArr(UBound(matrix1)) As Double
+
+        For r = 0 To UBound(matrix1)
+            returnArr(r) = matrix1(r) - matrix2(r)
+        Next
+
+        Return returnArr
+    End Function
+
+    Public Shared Function crossProd(v1() As Double, v2() As Double) As Double()
+        If v1.Length <> 3 Or v2.Length <> 3 Then
+            Throw New Exception("Cross product can only be computed for 3 dimensional vectors.")
+        End If
+
+        Dim returnArr(2) As Double
+
+        returnArr(0) = v1(1) * v2(2) - v2(1) * v1(2)
+        returnArr(1) = -(v1(0) * v2(2) - v2(0) * v1(2))
+        returnArr(2) = v1(0) * v2(1) - v2(0) * v1(1)
+
+        Return returnArr
+    End Function
+
+    Public Shared Function dotProd(v1() As Double, v2() As Double) As Double
+        If v1.Length <> v2.Length Then
+            Throw New Exception("Dot product can only be computed for vectors of the same dimension.")
+        End If
+
+        Dim retVal As Double = 0
+
+        For i = 0 To UBound(v1)
+            retVal = retVal + v1(i) * v2(i)
+        Next
+
+        Return retVal
+    End Function
+
+    Public Shared Function projPntToPln(pntXYZ() As Double, plnXYZ() As Double, plnN() As Double) As Double()
+        If pntXYZ.Length <> 3 Or plnXYZ.Length <> 3 Or plnN.Length <> 3 Then
+            Throw New Exception("Project point to plane only works for 3D vectors.")
+        End If
+
+        'Vector from origin to point
+        Dim dirToPnt() As Double = MatrixOps.matrixSubtractSingle(pntXYZ, plnXYZ)
+
+        'Distance from point to plane along normal vector
+        Dim distScalar As Double = MatrixOps.dotProd(dirToPnt, plnN)
+
+        'Point projected onto surface
+        Dim projPnt() As Double = MatrixOps.matrixSubtractSingle(pntXYZ, MatrixOps.matrixMultByConstSingle(plnN, distScalar))
+
+        Return projPnt
+    End Function
+
     Public Shared Function printMatrix(matrix(,) As Double, Optional showVal As Boolean = False, Optional roundNum As Boolean = True, Optional roundLength As Integer = 3) As String
         Dim message As String = ""
         For N = 0 To UBound(matrix, 1)
