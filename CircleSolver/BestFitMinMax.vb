@@ -20,10 +20,15 @@
         Dim totY As Double = 0
         Dim pointCnt As Integer = UBound(points)
         Dim calcCnt As Integer = 0
+        Dim stepVal As Integer = 1
 
-        For i = 0 To pointCnt - 2
-            For j_iter = i + 1 To pointCnt - 1
-                For k = j_iter + 1 To pointCnt
+        If pointCnt > 20 Then
+            stepVal = pointCnt / 20
+        End If
+
+        For i = 0 To pointCnt - 2 Step stepVal
+            For j_iter = i + 1 To pointCnt - 1 Step stepVal
+                For k = j_iter + 1 To pointCnt Step stepVal
                     Dim Xi, Xj, Xk, Yi, Yj, Yk As Double
                     Xi = points(i).X
                     Xj = points(j_iter).X

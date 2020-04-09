@@ -52,54 +52,54 @@
 #Region "Excel test output to show plot of nearby solutions"
 
 
-        Dim Excel As Object
-        Excel = CreateObject("Excel.Application")
-        Excel.Visible = True
-        Excel.workbooks.Add
+        '        Dim Excel As Object
+        '        Excel = CreateObject("Excel.Application")
+        '        Excel.Visible = True
+        '        Excel.workbooks.Add
 
-        Dim originalX As Double = fitCir.centerPnt.X
-        Dim originalY As Double = fitCir.centerPnt.Y
+        '        Dim originalX As Double = fitCir.centerPnt.X
+        '        Dim originalY As Double = fitCir.centerPnt.Y
 
-        Dim minError As Double = fitCir.maxRad - fitCir.rHat
+        '        Dim minError As Double = fitCir.maxRad - fitCir.rHat
 
-        Dim rowNum As Integer = 2
-        For z = -10 To 10
-            Dim colNum As Integer = 2
-            For y = -10 To 10
+        '        Dim rowNum As Integer = 2
+        '        For z = -10 To 10
+        '            Dim colNum As Integer = 2
+        '            For y = -10 To 10
 
-                Dim testCP = New Point(originalX + ((z / 5) * fitCir.rHat / 10), originalY + ((y / 10) * fitCir.rHat / 5))
+        '                Dim testCP = New Point(originalX + ((z / 5) * fitCir.rHat / 10), originalY + ((y / 10) * fitCir.rHat / 5))
 
-                Dim minRad As Double = 0
-                Dim maxRad As Double = 0
+        '                Dim minRad As Double = 0
+        '                Dim maxRad As Double = 0
 
-                Dim BFforEq = New BestFit
+        '                Dim BFforEq = New BestFit
 
-                For i = 0 To UBound(points)
-                    If i = 0 Then
-                        minRad = BFforEq.distP2P(points(i), testCP)
-                        maxRad = BFforEq.distP2P(points(i), testCP)
-                    ElseIf BFforEq.distP2P(points(i), testCP) < minRad Then
-                        minRad = BFforEq.distP2P(points(i), testCP)
-                    ElseIf BFforEq.distP2P(points(i), testCP) > maxRad Then
-                        maxRad = BFforEq.distP2P(points(i), testCP)
-                    End If
-                Next
+        '                For i = 0 To UBound(points)
+        '                    If i = 0 Then
+        '                        minRad = BFforEq.distP2P(points(i), testCP)
+        '                        maxRad = BFforEq.distP2P(points(i), testCP)
+        '                    ElseIf BFforEq.distP2P(points(i), testCP) < minRad Then
+        '                        minRad = BFforEq.distP2P(points(i), testCP)
+        '                    ElseIf BFforEq.distP2P(points(i), testCP) > maxRad Then
+        '                        maxRad = BFforEq.distP2P(points(i), testCP)
+        '                    End If
+        '                Next
 
 
-                fitCir.optimumRad(points)
+        '                fitCir.optimumRad(points)
 
-                Excel.cells(rowNum, 1) = testCP.X
-                Excel.cells(1, colNum) = testCP.Y
-                Excel.cells(rowNum, colNum) = maxRad - minRad
+        '                Excel.cells(rowNum, 1) = testCP.X
+        '                Excel.cells(1, colNum) = testCP.Y
+        '                Excel.cells(rowNum, colNum) = maxRad - minRad
 
-                If z = 0 And y = 0 Then
-                    Excel.cells(rowNum, colNum).font.bold = True
-                End If
+        '                If z = 0 And y = 0 Then
+        '                    Excel.cells(rowNum, colNum).font.bold = True
+        '                End If
 
-                colNum = colNum + 1
-            Next
-            rowNum = rowNum + 1
-        Next
+        '                colNum = colNum + 1
+        '            Next
+        '            rowNum = rowNum + 1
+        '        Next
 
 #End Region
 
@@ -108,33 +108,53 @@
         MsgBox(minMaxResidual(points, fitCir.centerPnt.X, fitCir.centerPnt.Y, fitCir.rHat))
 
         'Add best fit circle geometry into CATIA
-        'Dim cirCenter() As Double = MatrixOps.matrixAddSingle(MatrixOps.matrixMultByConstSingle(plnU, fitCir.centerPnt.X), MatrixOps.matrixMultByConstSingle(plnV, fitCir.centerPnt.Y))
+        Dim cirCenter() As Double = MatrixOps.matrixAddSingle(MatrixOps.matrixMultByConstSingle(plnU, fitCir.centerPnt.X), MatrixOps.matrixMultByConstSingle(plnV, fitCir.centerPnt.Y))
 
-        'cirCenter = MatrixOps.projPntToPln(cirCenter, plnXYZ, plnN)
+        Dim originProj() As Double = {0, 0, 0}
+        originProj = MatrixOps.projPntToPln(originProj, plnXYZ, plnN)
 
-        'Dim uPart As MECMOD.Part = CATIA.ActiveDocument.Part
+        cirCenter = MatrixOps.projPntToPln(cirCenter, plnXYZ, plnN)
 
-        'Dim hybShpFac As HybridShapeTypeLib.HybridShapeFactory = uPart.HybridShapeFactory
+        cirCenter = MatrixOps.matrixAddSingle(MatrixOps.matrixSubtractSingle(plnXYZ, originProj), cirCenter)
 
-        'Dim newPoint As HybridShapeTypeLib.HybridShapePointCoord = hybShpFac.AddNewPointCoord(cirCenter(0), cirCenter(1), cirCenter(2))
-        'newPoint.Name = "BF Center"
 
-        'Dim BFcircle As HybridShapeTypeLib.HybridShapeCircleCtrRad = hybShpFac.AddNewCircleCtrRad(newPoint, projPlane, True, fitCir.rHat)
-        'BFcircle.Name = fitCir.fitType & " BF Circle"
-        'uPart.HybridBodies.Item(3).AppendHybridShape(BFcircle)
+        Dim uPart As MECMOD.Part = CATIA.ActiveDocument.Part
 
-        'If fitCir.fitType = "Min_Sep" Then
-        '    BFcircle = hybShpFac.AddNewCircleCtrRad(newPoint, projPlane, True, fitCir.maxRad)
-        '    BFcircle.Name = "Max Inscribed Circle"
-        '    uPart.HybridBodies.Item(3).AppendHybridShape(BFcircle)
+        Dim hybShpFac As HybridShapeTypeLib.HybridShapeFactory = uPart.HybridShapeFactory
 
-        '    BFcircle = hybShpFac.AddNewCircleCtrRad(newPoint, projPlane, True, fitCir.minRad)
-        '    BFcircle.Name = "Min Circumscribed Circle"
-        '    uPart.HybridBodies.Item(3).AppendHybridShape(BFcircle)
-        'End If
+        Dim newPoint As HybridShapeTypeLib.HybridShapePointCoord = hybShpFac.AddNewPointCoord(cirCenter(0), cirCenter(1), cirCenter(2))
+        newPoint.Name = "BF Center"
 
-        'uPart.Update()
-        'uPart.Update()
+        Dim BFcircle As HybridShapeTypeLib.HybridShapeCircleCtrRad = hybShpFac.AddNewCircleCtrRad(newPoint, projPlane, True, fitCir.rHat)
+        BFcircle.Name = fitCir.fitType & " BF Circle"
+
+        Dim BFCircleHybBody As MECMOD.HybridBody = Nothing
+
+        For i = 1 To uPart.HybridBodies.Count
+            If uPart.HybridBodies.Item(i).Name = "BF Circles" Then
+                BFCircleHybBody = uPart.HybridBodies.Item(i)
+            End If
+        Next
+
+        If BFCircleHybBody Is Nothing Then
+            BFCircleHybBody = uPart.HybridBodies.Add()
+            BFCircleHybBody.Name = "BF Circles"
+        End If
+
+        BFCircleHybBody.AppendHybridShape(BFcircle)
+
+        If fitCir.fitType = "Min_Sep" Then
+            BFcircle = hybShpFac.AddNewCircleCtrRad(newPoint, projPlane, True, fitCir.maxRad)
+            BFcircle.Name = "Max Inscribed Circle"
+            BFCircleHybBody.AppendHybridShape(BFcircle)
+
+            BFcircle = hybShpFac.AddNewCircleCtrRad(newPoint, projPlane, True, fitCir.minRad)
+            BFcircle.Name = "Min Circumscribed Circle"
+            BFCircleHybBody.AppendHybridShape(BFcircle)
+        End If
+
+        uPart.Update()
+        uPart.Update()
 
         Me.Close()
     End Sub
