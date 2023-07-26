@@ -5,6 +5,12 @@
     Private Sub MainForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         If RunCheck() Then Exit Sub
 
+        Dim status As Long = MsgBox("Select a plane and then the points to fit. Hit OK to run.", vbOKCancel)
+        If status = vbCancel Then
+            Me.Close()
+            Exit Sub
+        End If
+
         Dim uSel As INFITF.Selection = MainForm.CATIA.ActiveDocument.Selection
 
         Dim TheSPAWorkbench As INFITF.Workbench = CATIA.ActiveDocument.GetWorkbench("SPAWorkbench")
